@@ -45,11 +45,11 @@ import org.guvnor.structure.organizationalunit.OrganizationalUnitService;
 import org.guvnor.structure.organizationalunit.RemoveOrganizationalUnitEvent;
 import org.guvnor.structure.organizationalunit.RepoAddedToOrganizationalUnitEvent;
 import org.guvnor.structure.organizationalunit.RepoRemovedFromOrganizationalUnitEvent;
+import org.guvnor.structure.repositories.Repository;
 import org.uberfire.backend.server.util.Paths;
 import org.uberfire.commons.services.cdi.Startup;
 import org.uberfire.ext.editor.commons.backend.version.VersionRecordService;
 import org.uberfire.java.nio.base.version.VersionRecord;
-import org.uberfire.java.nio.file.Path;
 import org.uberfire.workbench.events.ResourceAddedEvent;
 import org.uberfire.workbench.events.ResourceBatchChangesEvent;
 import org.uberfire.workbench.events.ResourceCopiedEvent;
@@ -150,9 +150,16 @@ public class ContributorsManager implements DataSetGenerator {
                 for (final WorkspaceProject project : projects) {
                     final String repoAlias = project.getRepository().getAlias();
                     final String projectName = project.getName();
-                    org.uberfire.backend.vfs.Path rootPath = project.getRootPath();
-                    final Path projectRoot = Paths.convert(rootPath);
-                    final List<VersionRecord> recordList = recordService.loadVersionRecords(projectRoot);
+                    final String branchUri = params.get("uuid");
+                    final Repository repository = project.getRepository();
+                    final String branchName = getBranchName(branchUri);
+
+                    dataSetdef.setUUID(branchUri);
+                    dataSetDefRegistry.registerDataSetDef(dataSetdef);
+
+                    final List<VersionRecord> recordList = recordService
+                                .loadVersionRecords(Paths.convert(repository.getBranch(branchName)
+                                        .orElse(repository.getDefaultBranch().get()).getPath()));
 
                     if (recordList.isEmpty()) {
                         dsBuilder.row(org, //org
@@ -181,8 +188,18 @@ public class ContributorsManager implements DataSetGenerator {
         }
 
         DataSet dataSet = dsBuilder.buildDataSet();
-        dataSet.setUUID(GIT_CONTRIB);
+        dataSet.setUUID(params.get("uuid"));
         return dataSet;
+    }
+
+    private String getBranchName(String uri) {
+        if (uri != null && uri.indexOf("://") > -1) {
+            int startIndex = uri.indexOf("://") + 3;
+            int endIndex = uri.indexOf('@');
+            return uri.substring(startIndex, endIndex);
+        } else {
+            return "master";
+        }
     }
 
     protected void invalidateDataSet() {

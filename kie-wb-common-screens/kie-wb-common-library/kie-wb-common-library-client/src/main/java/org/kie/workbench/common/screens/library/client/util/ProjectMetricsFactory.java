@@ -127,7 +127,7 @@ public class ProjectMetricsFactory {
 
     public DisplayerSettings buildCommitsPerAuthorSettings(WorkspaceProject project) {
         return DisplayerSettingsFactory.newBubbleChartSettings()
-                .dataset(GIT_CONTRIB)
+                .dataset(project.getBranch().getPath().toURI())
                 .filter(createProjectFilter(project))
                 .group(COLUMN_AUTHOR)
                 .column(COLUMN_AUTHOR, translationService.getTranslation(LibraryConstants.Author))
@@ -146,7 +146,7 @@ public class ProjectMetricsFactory {
 
     public DisplayerSettings buildCommitsOverTimeSettings(WorkspaceProject project) {
         return DisplayerSettingsFactory.newAreaChartSettings()
-                .dataset(GIT_CONTRIB)
+                .dataset(project.getBranch().getPath().toURI())
                 .filter(createProjectFilter(project))
                 .group(COLUMN_DATE).dynamic(80,
                                             MONTH,
@@ -169,7 +169,7 @@ public class ProjectMetricsFactory {
 
     public DisplayerSettings buildCommitsByYearSettings(WorkspaceProject project) {
         return DisplayerSettingsFactory.newPieChartSettings()
-                .dataset(GIT_CONTRIB)
+                .dataset(project.getBranch().getPath().toURI())
                 .filter(COLUMN_DATE,
                         FilterFactory.notNull())
                 .filter(createProjectFilter(project))
@@ -195,7 +195,7 @@ public class ProjectMetricsFactory {
 
     public DisplayerSettings buildCommitsByQuarterSettings(WorkspaceProject project) {
         return DisplayerSettingsFactory.newPieChartSettings()
-                .dataset(GIT_CONTRIB)
+                .dataset(project.getBranch().getPath().toURI())
                 .filter(COLUMN_DATE,
                         FilterFactory.notNull())
                 .filter(createProjectFilter(project))
@@ -219,7 +219,7 @@ public class ProjectMetricsFactory {
 
     public DisplayerSettings buildCommitsByDayOfWeekSettings(WorkspaceProject project) {
         return DisplayerSettingsFactory.newBarChartSettings()
-                .dataset(GIT_CONTRIB)
+                .dataset(project.getBranch().getPath().toURI())
                 .filter(COLUMN_DATE,
                         FilterFactory.notNull())
                 .filter(createProjectFilter(project))
@@ -243,7 +243,7 @@ public class ProjectMetricsFactory {
 
     public DisplayerSettings buildTopContributorSelectorSettings(WorkspaceProject project) {
         return DisplayerSettingsFactory.newSelectorSettings()
-                .dataset(GIT_CONTRIB)
+                .dataset(project.getBranch().getPath().toURI())
                 .filter(createProjectFilter(project))
                 .group(COLUMN_AUTHOR)
                 .column(COLUMN_AUTHOR,
@@ -268,7 +268,7 @@ public class ProjectMetricsFactory {
 
     public DisplayerSettings buildDateSelectorSettings(WorkspaceProject project) {
         return DisplayerSettingsFactory.newSelectorSettings()
-                .dataset(GIT_CONTRIB)
+                .dataset(project.getBranch().getPath().toURI())
                 .filter(createProjectFilter(project))
                 .column(COLUMN_DATE).format(translationService.getTranslation(LibraryConstants.Date), "dd MMM, yyyy HH:mm")
                 .subtype(DisplayerSubType.SELECTOR_SLIDER)
@@ -286,7 +286,7 @@ public class ProjectMetricsFactory {
 
     public DisplayerSettings buildAllCommitsSettings(WorkspaceProject project) {
         return DisplayerSettingsFactory.newTableSettings()
-                .dataset(GIT_CONTRIB)
+                .dataset(project.getBranch().getPath().toURI())
                 .filter(createProjectFilter(project))
                 .column(COLUMN_AUTHOR,
                         translationService.getTranslation(LibraryConstants.Author))
